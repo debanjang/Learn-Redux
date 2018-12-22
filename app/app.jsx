@@ -17,6 +17,8 @@ ReactDOM.render(
   document.getElementById('app')
 );
 
+require('./redux-example.jsx');
+
 //Experiment with spread operator
 // var objOne= {
 //   name: 'Debanjan',
