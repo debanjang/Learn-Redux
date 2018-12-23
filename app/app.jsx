@@ -17,6 +17,7 @@ ReactDOM.render(
   document.getElementById('app')
 );
 
+//require('./redux-example.jsx');
 require('./redux-todo-example.jsx');
 
 //Experiment with spread operator
@@ -28,6 +29,10 @@ require('./redux-todo-example.jsx');
 // var objTwo= {
 //   age: '30',
 //   ...objOne
+// };
+// var objThree={
+//  ...objTwo,
+//  name: 'Soumadeep' //This will change the name property of objTwo in the new objThree
 // };
 //
 // console.log(objTwo);
