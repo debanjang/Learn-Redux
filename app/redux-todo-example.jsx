@@ -20,15 +20,30 @@ var reducer = (state = stateDefault, action)=>{
     }
 };
 
-var store = redux.createStore(reducer);
+var store = redux.createStore(reducer, /*preloadedState,*/
+    window.__REDUX_DEVTOOLS_EXTENSION__? window.__REDUX_DEVTOOLS_EXTENSION__():f=>f
+);  // Second argument is to initialize Redux Dev Tools
+
+store.subscribe(()=>{
+    var state = store.getState();
+    document.getElementById('app').innerHTML = state.searchText;
+    console.log('New Search Text',state.searchText);
+});
 
 var currentState = store.getState();
 console.log('Current State', currentState);
 
 store.dispatch({
     type: 'CHANGE_SEARCH_TEXT',
-    searchText: 'New Search Text'
+    searchText: 'Work'
 });
 
-var newState = store.getState();
-console.log('Search Text Should Have Changed', newState);
+store.dispatch({
+    type:'CHANGE_SEARCH_TEXT',
+    searchText: 'Play'
+});
+
+store.dispatch({
+    type:'CHANGE_SEARCH_TEXT',
+    searchText: 'Sleep'
+});

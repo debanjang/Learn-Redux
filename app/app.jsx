@@ -12,13 +12,13 @@ $('document').foundation();
 require('style!css!sass!applicationStyles');
 
 // RaectDOM.render is the starting point of the application. render to the app container
-ReactDOM.render(
+/* ReactDOM.render(
   <p>React Boilerplate</p>,
   document.getElementById('app')
-);
+); */
 
-//require('./redux-example.jsx');
-require('./redux-todo-example.jsx');
+require('./redux-example.jsx');
+//require('./redux-todo-example.jsx');
 
 //Experiment with spread operator
 // var objOne= {
