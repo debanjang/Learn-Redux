@@ -1,64 +1,106 @@
 var redux = require('redux');
 
-var defaultState = {
-    name: 'Anonymous',
-    hobbies:[],
-    movies:[]
-};
-
-var nextHobbyId = 1;
-var nextMovieId = 1;
-
 /* A reducer is a pure function that combines the current 
 state and an action to produce a new state. Called whenever 
 an action is dispatched to the store associated with this reducer*/
-var reducer = (state=defaultState, action)=>{
-    //state = state || {name:Anonymous}. The version we are using instead is a es6 featue called arg defualt
+
+//name reducer
+//______________________________________________
+var nameReducer = (state='Anonymous', action)=>{
     switch(action.type){
         case 'CHANGE_NAME':
-            return {
-                ...state,
-                name: action.name
-            };
-        case 'ADD_HOBBIES':
-            return {
-                ...state, //grab the current state and override the hobbies
-                hobbies: [ 
-                    ...state.hobbies, //grab the current hobbies and add the new object to hobbies
-                    {
-                        id: nextHobbyId++,
-                        hobby: action.hobby
-                    }
-                ]
-            };
-        case 'REMOVE_HOBBIES':
-            return {
-                ...state, //grab the current state and override the hobbies
-                hobbies: state.hobbies.filter((hobby)=>{ //return true to keep an object, return false to remove
-                    return hobby.id !== action.id;
-                })
-            };
-        case 'ADD_MOVIES':
-            return {
-                ...state,
-                movies: [
-                    ...state.movies,
-                    {
-                        id: nextMovieId++,
-                        title: action.title,
-                        genre: action.genre
-                    }
-                ]
-            };
-        case 'REMOVE_MOVIES':
-            return {
-                ...state,
-                movies: state.movies.filter((movie)=>movie.id!== action.id) //same as last filter, in a single line
-            };
+            return action.name;
         default:
             return state;
     }
 };
+
+var changeName = (name)=>{
+    return {
+        type: 'CHANGE_NAME',
+        name //es6 notation for name:name
+    }
+};
+
+//hobby reducer
+//______________________________________________
+var nextHobbyId = 1;
+var hobbyReducer = (state=[], action)=>{
+    switch(action.type){
+        case 'ADD_HOBBIES':
+            return [
+                ...state,
+                {
+                    id: nextHobbyId++,
+                    hobby: action.hobby
+                }
+            ];
+        case 'REMOVE_HOBBIES':
+            return state.filter((hobby)=>hobby.id!==action.id);
+        default:
+            return state;
+    }
+};
+
+var addHobby = (hobby)=>{
+    return{
+        type:'ADD_HOBBIES',
+        hobby //es6 notaion. Same as hobby:hobby
+    }
+};
+
+var removeHobby = (id)=>{
+    return {
+        type:'REMOVE_HOBBIES',
+        id //es6 notaion. Same as id:id
+    };
+}; 
+
+//movie reducer
+//_________________________________________
+var nextMovieId = 1;
+var movieReducer = (state=[], action)=>{
+    switch(action.type){
+        case 'ADD_MOVIES':
+            return [
+                ...state,
+                {
+                    id: nextMovieId++,
+                    title: action.title,
+                    genre: action.genre
+                }
+            ];
+        case 'REMOVE_MOVIES':
+            return state.filter((movie)=>{
+                return movie.id !== action.id;
+            });
+        default: 
+            return state;
+    }
+};
+
+var addMovie = (title, genre)=>{
+    return {
+        type:'ADD_MOVIES',
+        title, //es6 notaion. Same as title:title
+        genre //es6 notaion. Same as genre:genre
+    }
+};
+ 
+var removeMovie = (id)=>{
+    return {
+        type:'REMOVE_MOVIES',
+        id //es6 notaion. Same as id:id
+    }
+}; 
+
+//combined reducer
+//____________________________________________
+var reducer = redux.combineReducers({
+    name: nameReducer,
+    hobbies: hobbyReducer,
+    movies: movieReducer
+});
 
 /*This is the store that contains the state
 Second arg is only needed to plugin the Redux Dev Tools*/
@@ -83,53 +125,23 @@ console.log('Name in Current State',currentState.name);
 
 /* Dispatch an action to the reducer assigned to the store 
 All dispatchers are called in order*/
-store.dispatch({
-    type:'CHANGE_NAME',
-    name:'Debanjan'
-});
+store.dispatch(changeName('Debanjan'));
 
-store.dispatch({
-    type:'CHANGE_NAME',
-    name:'Debal'
-});
+store.dispatch(changeName('Debal'));
 
-store.dispatch({
-    type: 'ADD_HOBBIES',
-    hobby: 'Reading'
-});
+store.dispatch(addHobby('Reading'));
 
-store.dispatch({
-    type: 'ADD_HOBBIES',
-    hobby: 'Cooking'
-});
+store.dispatch(addHobby('Cooking'));
 
-store.dispatch({
-    type: 'REMOVE_HOBBIES',
-    id: 2  //the id to remove from the array
-});
+store.dispatch(removeHobby(2));
 
-store.dispatch({
-    type: 'ADD_MOVIES',
-    title: 'Rambo',
-    genre: 'Action'
-});
+store.dispatch(addMovie('Rambo','Action'));
 
-store.dispatch({
-    type: 'ADD_MOVIES',
-    title: 'Baishe Srabon',
-    genre: 'Thriller'
-});
+store.dispatch(addMovie('Baishe Srabon', 'Thriller'));
 
-store.dispatch({
-    type: 'REMOVE_MOVIES',
-    id: 1
-});
+store.dispatch(removeMovie(1));
 
-store.dispatch({
-    type: 'ADD_MOVIES',
-    title: 'DDLJ',
-    genre: 'Romance'
-});
+store.dispatch(addMovie('DDLJ', 'Romance'));
 
 
 /* var newState = store.getState();
