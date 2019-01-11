@@ -1,4 +1,5 @@
 var redux = require('redux');
+var axios = require('axios');
 
 /* A reducer is a pure function that combines the current 
 state and an action to produce a new state. Called whenever 
@@ -94,12 +95,57 @@ var removeMovie = (id)=>{
     }
 }; 
 
+//map reducer and action generators
+//__________________________________
+
+var mapReducer = (state={isLoading: false, url: undefined}, action)=>{
+    switch(action.type){
+        case 'START_FETCHING_LOCATION':
+            return {
+                isLoading: true,
+                url: undefined
+            };
+        case 'COMPLETE_FETCHING_LOCATION':
+            return {
+                isLoading: false,
+                url: action.url
+            }
+        default:
+            return state;
+    }
+};
+
+var startFetchingLocation = ()=>{
+    return {
+        type: 'START_FETCHING_LOCATION'
+    };
+};
+
+var completeFetchingLocation = (url) =>{
+    return {
+        type: 'COMPLETE_FETCHING_LOCATION',
+        url //es6 notation. Same as url:url
+    };
+};
+
+var fetchLocation = ()=>{
+    //Set isLoading to true and clear out any previous URL by setting to undefined
+    store.dispatch(startFetchingLocation());
+    //fetch URL
+    axios.get('https://ipinfo.io').then(function(resp){
+        var loc = resp.data.loc;
+            var baseURL = 'http://maps.google.com?q=';
+            store.dispatch(completeFetchingLocation(baseURL + loc));
+        });
+};
+
 //combined reducer
 //____________________________________________
 var reducer = redux.combineReducers({
-    name: nameReducer,
+    name: nameReducer, //state handled by this reducer is called name
     hobbies: hobbyReducer,
-    movies: movieReducer
+    movies: movieReducer,
+    map: mapReducer
 });
 
 /*This is the store that contains the state
@@ -113,9 +159,12 @@ Once we do that, anytime we update the state by dispatching an action,
 the callback function will be called */
 store.subscribe(()=>{
     var state = store.getState();
-    document.getElementById('app').innerHTML=state.name;
-    console.log('Name in New State',state.name);
-
+    
+    if(state.map.isLoading){
+        document.getElementById('app').innerHTML='Loading...';
+    }else if(state.map.url){
+        document.getElementById('app').innerHTML='<a href="' +state.map.url+ ' "target="__blank"> View Your Location</a>';
+    }
     console.log("New State",state);
 });
 
@@ -126,6 +175,9 @@ console.log('Name in Current State',currentState.name);
 /* Dispatch an action to the reducer assigned to the store 
 All dispatchers are called in order*/
 store.dispatch(changeName('Debanjan'));
+
+//Dispatch the asynchronous functions
+fetchLocation();
 
 store.dispatch(changeName('Debal'));
 
