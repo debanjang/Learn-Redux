@@ -38,6 +38,7 @@
     "node-sass": "^4.10.0",
     "react-addons-test-utils": "^0.14.7",
     "redux": "^3.3.1",
+    "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0",
     "script-loader": "^0.6.1",
     "style-loader": "^0.13.0",
