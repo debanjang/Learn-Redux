@@ -50,7 +50,7 @@ export var completeFetchingLocation = (url) =>{
 };
 
 export var fetchLocation = ()=>{
-    return (dispatch, getState)=>{
+    return (dispatch, getState)=>{ 
         //Set isLoading to true and clear out any previous URL by setting to undefined
         dispatch(startFetchingLocation());
         //fetch URL
